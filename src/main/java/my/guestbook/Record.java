@@ -7,12 +7,28 @@ import java.sql.Timestamp;
  */
 public class Record {
     int id;
-    Timestamp ts;
+    Timestamp date;
     String message;
 
     Record(int id, Timestamp ts, String msg){
         this.id = id;
-        this.ts = ts;
+        this.date = ts;
         this.message = msg;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Timestamp getDate() {
+        return this.date;
+    }
+
+    public int getId() {
+        return this.id;
     }
 }

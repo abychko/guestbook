@@ -1,3 +1,4 @@
+import my.guestbook.GuestBookControllerImpl;
 import my.guestbook.Record;
 
 import javax.annotation.Resource;
@@ -8,36 +9,49 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "GuestBook", urlPatterns = {"/guestbook"})
+@WebServlet(name = "GuestBook", urlPatterns = {"/guestbook", "/post"})
 
 public class GuestBookServlet extends HttpServlet {
-
+    GuestBookControllerImpl guestBookController;
     @Resource(name = "jdbc/guestbookDS")
     private DataSource ds;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        Connection con = null;
+        guestBookController = new GuestBookControllerImpl(ds);
         try {
-            con = ds.getConnection();
+            List<Record> mList = guestBookController.getRecords();
+            req.setAttribute("records", mList);
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (con != null) try {
-                con.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
-       List<Record> records = new ArrayList();
-       req.getRequestDispatcher("/WEB-INF/records.jsp").forward(req, resp);
-
+        req.getRequestDispatcher("/WEB-INF/records.jsp").forward(req, resp);
     }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        guestBookController = new GuestBookControllerImpl(ds);
+        try {
+            req.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String message = req.getParameter("message");
+        if (message != null) {
+            guestBookController.addRecord(message);
+            resp.sendRedirect("/guestbook");
+        }
+        //  try {
+        //    req.getRequestDispatcher("/guestbook").forward(req, resp);
+        //} catch (ServletException e) {
+        //   e.printStackTrace();
+        //} catch (IOException e) {
+        //  e.printStackTrace();
+        //}
+    }
 }

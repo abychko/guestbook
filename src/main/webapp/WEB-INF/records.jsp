@@ -1,4 +1,3 @@
-<%@ page import="my.guestbook.Record" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%--
@@ -13,12 +12,23 @@
 
 <html>
 <head>
-    <title></title>
+    <title>GuestBook</title>
 </head>
 <body>
-
+<div style="text-align: center;">
+    <h1>My Guestbook</h1></div>
+<HR>
 <table border="1">
+    <c:forEach var="record" items="${requestScope.records}">
+        <tr>
+            <td><c:out value="${record.getId()}"/></td>
+            <td><i><c:out value="${record.getDate()}"/></i></td>
+            <td><c:out value="${record.getMessage()}"/></td>
+        </tr>
+    </c:forEach>
 </table>
+<div style="text-align: center;">
 
+</div>
 </body>
 </html>
